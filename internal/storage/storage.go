@@ -1,7 +1,9 @@
 package storage
 
+import "pixelated/internal/models"
+
 type Storage interface {
-	GetChunkByID(chunkID string) (string, error)
-	GetAllChunks() ([]string, error)
+	GetChunkByID(chunkID string) (models.Chunk, error)
+	GetAllChunks() ([][]models.Chunk, error)
 	UpdateChunk(chunkID string, changes string) error
 }

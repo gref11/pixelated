@@ -1,6 +1,6 @@
 package models
 
 type Pixel struct {
-	Color  int32
-	UserID int32
+	ColorID int64
+	UserID  int64
 }

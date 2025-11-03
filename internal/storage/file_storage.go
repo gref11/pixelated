@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 
 	"pixelated/internal/models"
-	"pixelated/scripts"
+	"pixelated/internal/utils"
 )
 
 type FileStorage struct {
@@ -40,7 +40,7 @@ func NewFileStorage(folderPath string, rowChunks int, columnChunks int) (FileSto
 		fileStorage.Chunks[row] = chunksOneDimArray[row*columnChunks : (row+1)*columnChunks]
 
 		for column := 0; column < columnChunks; column++ {
-			chunkFilePath := filepath.Join(folderPath, scripts.GetChunkName(row, column)+".pix")
+			chunkFilePath := filepath.Join(folderPath, utils.GetChunkName(row, column)+".pix")
 			if _, err := os.Stat(chunkFilePath); err != nil {
 				if errors.Is(err, fs.ErrNotExist) {
 					chunkFile, err := os.Create(chunkFilePath)

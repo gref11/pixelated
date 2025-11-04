@@ -1,15 +1,36 @@
 package utils
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 
 	"pixelated/internal/models"
+	"pixelated/internal/regexps"
 )
 
 func GetChunkName(row int, column int) string {
 	chunkName := "c." + strconv.Itoa(row) + "." + strconv.Itoa(column)
 	return chunkName
+}
+
+func GetChunkCoords(chunkName string) (int, int, error) {
+	if ischunkName := regexps.ChunkNameRegexp.MatchString(chunkName); !ischunkName {
+		return 0, 0, errors.New("cannot get chunk coords: incorrect chunk name")
+	}
+
+	matches := regexps.ChunkNameRegexp.FindStringSubmatch(chunkName)
+
+	row, err := strconv.Atoi(matches[1])
+	if err != nil {
+		return 0, 0, fmt.Errorf("cannot get chunk coords: %w", err)
+	}
+	column, err := strconv.Atoi(matches[2])
+	if err != nil {
+		return 0, 0, fmt.Errorf("cannot get chunk coords: %w", err)
+	}
+
+	return row, column, nil
 }
 
 func printPixel(pixel models.Pixel) {

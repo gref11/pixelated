@@ -22,9 +22,9 @@ type FileStorage struct {
 func NewFileStorage(folderPath string, rowChunks int, columnChunks int) (FileStorage, error) {
 	if _, err := os.Stat(folderPath); err != nil {
 		if errors.Is(err, fs.ErrNotExist) {
-			fmt.Errorf("File storage folder not found error")
+			return FileStorage{}, fmt.Errorf("cannot init file storage: folder not found")
 		}
-		return FileStorage{}, err
+		return FileStorage{}, fmt.Errorf("cannot init file storage: %w", err)
 	}
 
 	fileStorage := FileStorage{
@@ -45,31 +45,27 @@ func NewFileStorage(folderPath string, rowChunks int, columnChunks int) (FileSto
 				if errors.Is(err, fs.ErrNotExist) {
 					chunkFile, err := os.Create(chunkFilePath)
 					if err != nil {
-						fmt.Printf("Err: cannot create chunk file: %v\n", err)
-						continue
+						return FileStorage{}, fmt.Errorf("err: cannot create chunk file: %w", err)
 					}
 					defer chunkFile.Close()
 
 					err = binary.Write(chunkFile, binary.LittleEndian, fileStorage.Chunks[row][column])
 					if err != nil {
-						fmt.Printf("Err: cannot write chunk file: %v\n", err)
-						continue
+						return FileStorage{}, fmt.Errorf("err: cannot write chunk file: %w", err)
 					}
 				} else {
-					fmt.Printf("Err: %v\n", err)
+					return FileStorage{}, fmt.Errorf("cannot open chunk file: %w", err)
 				}
 			} else {
 				chunkFile, err := os.Open(chunkFilePath)
 				if err != nil {
-					fmt.Printf("Err: cannot create chunk file: %v\n", err)
-					continue
+					return FileStorage{}, fmt.Errorf("cannot open chunk file: %w", err)
 				}
 				defer chunkFile.Close()
 
 				err = binary.Read(chunkFile, binary.LittleEndian, &fileStorage.Chunks[row][column])
 				if err != nil {
-					fmt.Printf("Err: cannot read chunk file: %v\n", err)
-					continue
+					return FileStorage{}, fmt.Errorf("cannot read chunk file: %w", err)
 				}
 			}
 		}

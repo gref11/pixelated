@@ -80,7 +80,8 @@ func (fileStorage *FileStorage) GetChunkByID(chunkID string) (models.Chunk, erro
 		return models.Chunk{}, fmt.Errorf("cannot get chunk: %w", err)
 	}
 
-	if chunkRow > fileStorage.RowChunks || chunkColumn > fileStorage.ColumnChunks {
+	if chunkRow >= fileStorage.RowChunks || chunkRow < 0 ||
+		chunkColumn >= fileStorage.ColumnChunks || chunkColumn < 0 {
 		return models.Chunk{}, errors.New("cannot get chunk: chunk does not exist")
 	}
 
@@ -101,7 +102,8 @@ func (fileStorage *FileStorage) UpdateChunk(chunkID string, changes models.Chunk
 		return fmt.Errorf("cannot update chunk: %w", err)
 	}
 
-	if chunkRow > fileStorage.RowChunks || chunkColumn > fileStorage.ColumnChunks {
+	if chunkRow >= fileStorage.RowChunks || chunkRow < 0 ||
+		chunkColumn >= fileStorage.ColumnChunks || chunkColumn < 0 {
 		return errors.New("cannot update chunk: chunk does not exist")
 	}
 

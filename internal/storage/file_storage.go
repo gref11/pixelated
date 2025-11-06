@@ -73,3 +73,48 @@ func NewFileStorage(folderPath string, rowChunks int, columnChunks int) (FileSto
 
 	return fileStorage, nil
 }
+
+func (fileStorage *FileStorage) GetChunkByID(chunkID string) (models.Chunk, error) {
+	chunkRow, chunkColumn, err := utils.GetChunkCoords(chunkID)
+	if err != nil {
+		return models.Chunk{}, fmt.Errorf("cannot get chunk: %w", err)
+	}
+
+	if chunkRow > fileStorage.RowChunks || chunkColumn > fileStorage.ColumnChunks {
+		return models.Chunk{}, errors.New("cannot get chunk: chunk does not exist")
+	}
+
+	chunk := fileStorage.Chunks[chunkRow][chunkColumn]
+
+	return chunk, nil
+}
+
+func (fileStorage *FileStorage) GetAllChunks() ([][]models.Chunk, error) {
+	chunks := fileStorage.Chunks
+
+	return chunks, nil
+}
+
+func (fileStorage *FileStorage) UpdateChunk(chunkID string, changes models.Chunk) error {
+	chunkRow, chunkColumn, err := utils.GetChunkCoords(chunkID)
+	if err != nil {
+		return fmt.Errorf("cannot update chunk: %w", err)
+	}
+
+	if chunkRow > fileStorage.RowChunks || chunkColumn > fileStorage.ColumnChunks {
+		return errors.New("cannot update chunk: chunk does not exist")
+	}
+
+	for i := 0; i < len(changes.Pixels); i++ {
+		for j := 0; j < len(changes.Pixels[i]); j++ {
+			if changes.Pixels[i][j].ColorID == 0 {
+				continue
+			}
+
+			fileStorage.Chunks[chunkRow][chunkColumn].Pixels[i][j].ColorID = changes.Pixels[i][j].ColorID
+			fileStorage.Chunks[chunkRow][chunkColumn].Pixels[i][j].UserID = changes.Pixels[i][j].UserID
+		}
+	}
+
+	return nil
+}

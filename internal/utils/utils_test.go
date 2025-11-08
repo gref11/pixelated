@@ -57,3 +57,17 @@ func TestGettingChunkCoordsColumnError(t *testing.T) {
 	assert.Equal(t, expectedRow, actualRow)
 	assert.Equal(t, expectedColumn, actualColumn)
 }
+
+func TestGettingChunkCoordsFormatError(t *testing.T) {
+	chunkName := "c..456"
+
+	expectedRow := 0
+	expectedColumn := 0
+
+	actualRow, actualColumn, err := GetChunkCoords(chunkName)
+
+	assert.NotNil(t, err)
+
+	assert.Equal(t, expectedRow, actualRow)
+	assert.Equal(t, expectedColumn, actualColumn)
+}

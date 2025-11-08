@@ -120,3 +120,14 @@ func (fileStorage *FileStorage) UpdateChunk(chunkID string, changes models.Chunk
 
 	return nil
 }
+
+func (fileStorage *FileStorage) UpdateAllChunks(changes map[string]models.Chunk) error {
+	for chunkID, chunkChanges := range changes {
+		err := fileStorage.UpdateChunk(chunkID, chunkChanges)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}

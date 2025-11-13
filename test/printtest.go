@@ -20,8 +20,8 @@ func main() {
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 	}
 
-	for i := 0; i < 10; i++ {
-		for j := 0; j < 10; j++ {
+	for i := range 10 {
+		for j := range 10 {
 			fileStorage.Chunks[0][0].Pixels[i][j].ColorID = testImg[i][j]
 		}
 	}

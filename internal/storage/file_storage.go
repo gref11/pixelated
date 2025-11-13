@@ -36,10 +36,10 @@ func NewFileStorage(folderPath string, rowChunks int, columnChunks int) (FileSto
 
 	chunksOneDimArray := make([]models.Chunk, rowChunks*columnChunks) // fileStorage.Chunks[i][j] = chunksOneDimArray[i * columnChunks + j];
 
-	for row := 0; row < rowChunks; row++ {
+	for row := range rowChunks {
 		fileStorage.Chunks[row] = chunksOneDimArray[row*columnChunks : (row+1)*columnChunks]
 
-		for column := 0; column < columnChunks; column++ {
+		for column := range columnChunks {
 			chunkFilePath := filepath.Join(folderPath, utils.GetChunkName(row, column)+".pix")
 			if _, err := os.Stat(chunkFilePath); err != nil {
 				if errors.Is(err, fs.ErrNotExist) {
@@ -107,8 +107,8 @@ func (fileStorage *FileStorage) UpdateChunk(chunkID string, changes models.Chunk
 		return errors.New("cannot update chunk: chunk does not exist")
 	}
 
-	for i := 0; i < len(changes.Pixels); i++ {
-		for j := 0; j < len(changes.Pixels[i]); j++ {
+	for i := range len(changes.Pixels) {
+		for j := range len(changes.Pixels[i]) {
 			if changes.Pixels[i][j].ColorID == 0 {
 				continue
 			}
